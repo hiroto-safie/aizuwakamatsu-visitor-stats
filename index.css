@@ -1,0 +1,29 @@
+div.flex-body {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+#display {
+    display: flex;
+}
+
+#buttons-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+}
+
+.canvas {
+    border: 1px solid #000;
+    flex: 1;
+}
+
+.graph-selection-button {
+    margin: 1rem;
+    border-radius: 1rem;
+    font-size: xx-large;
+}
