@@ -313,6 +313,20 @@ async function readCSV(filePath) {
     }
 }
 
+const createPopupContent = (year) => {
+    const content = []
+    buttons.forEach(button => {
+        if (!button.isSelected) return
+        const spot = spots.find(spot => spot.name === button.label)
+        if (!spot) return
+        const statistic = spot.statistics.find(stat => stat.year === year)
+        if (!statistic) return
+        content.push(`${button.label}: ${statistic.numVisitors}人`)
+    })
+
+    return content.join('\n')
+}
+
 async function init() {
     drawWhiteDisplay()
     drawButtonsArea()
@@ -345,6 +359,7 @@ async function init() {
         }
     })
     canvas.addEventListener('mousemove', (e) => {
+        isSorting ? drawSortingGraph(spotName, color, direction) : drawGraph()
         if (e.offsetX < VERTICAL_AXIS_WIDTH || VERTICAL_AXIS_WIDTH + GRAPH_WIDTH < e.offsetX) {
             return
         }
@@ -355,11 +370,14 @@ async function init() {
         // 各観光地の年ごとのデータを取得し、昇順でソートしてグラフに描画する
         for (let year_i = 0; year_i < years.length; year_i++) {
             const spotsVisitors = []
+            const popupContents = []
             for (let spot_i = 0; spot_i < 5; spot_i++) {
                 const spot = spots[spot_i]
                 if (!buttons[spot_i].isSelected) {
                     continue
                 }
+
+                popupContents.push(`${buttons[spot_i].label}: ${spot.statistics[year_i].numVisitors}人`)
 
                 spotsVisitors.push({
                     color: buttons[spot_i].color,
@@ -380,19 +398,24 @@ async function init() {
                     GRAPH_MARGIN_TOP + GRAPH_HEIGHT - Number(spotVisitors.numVisitors)*(GRAPH_HEIGHT/1000000) < e.offsetY &&
                     e.offsetY < GRAPH_MARGIN_TOP + GRAPH_HEIGHT
                 ) {
-                    ctx.fillStyle = "black"
                     ctx.roundRect(
                         VERTICAL_AXIS_WIDTH + (HORIZONTAL_INTERVAL + BAR_WIDTH)*year_i*scaleX + currentX + BAR_WIDTH*scaleX,
-                        GRAPH_MARGIN_TOP + GRAPH_HEIGHT - Number(spotVisitors.numVisitors)*(GRAPH_HEIGHT/1000000),
-                        200,
-                        100,
+                        e.offsetY,
+                        250,
+                        40*popupContents.length,
                         10
                     )
                     ctx.stroke()
                     ctx.fillStyle = "white"
                     ctx.fill()
                     ctx.fillStyle = "black"
-                    ctx.fillText("hola", VERTICAL_AXIS_WIDTH + (HORIZONTAL_INTERVAL + BAR_WIDTH)*year_i*scaleX + currentX + BAR_WIDTH*scaleX + 10, GRAPH_MARGIN_TOP + GRAPH_HEIGHT - Number(spotVisitors.numVisitors)*(GRAPH_HEIGHT/1000000) + 20)
+                    for (let i = 0; i < popupContents.length; i++) {
+                        ctx.fillText(
+                            popupContents[i],
+                            VERTICAL_AXIS_WIDTH + (HORIZONTAL_INTERVAL + BAR_WIDTH)*year_i*scaleX + currentX + BAR_WIDTH*scaleX,
+                            e.offsetY + 30*(i+1)
+                        )
+                    }
                 }
             }
         }
