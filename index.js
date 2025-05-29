@@ -69,7 +69,7 @@ const buttons = [
     {
         id: 3,
         label: "御薬園",
-        color: "blue",
+        color: "#00FFFF",
         isSelected: false
     },
     {
