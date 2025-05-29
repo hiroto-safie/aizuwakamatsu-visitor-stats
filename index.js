@@ -402,7 +402,7 @@ async function init() {
                         VERTICAL_AXIS_WIDTH + (HORIZONTAL_INTERVAL + BAR_WIDTH)*year_i*scaleX + currentX + BAR_WIDTH*scaleX,
                         e.offsetY,
                         250,
-                        40*popupContents.length,
+                        35*popupContents.length,
                         10
                     )
                     ctx.stroke()
@@ -432,7 +432,7 @@ async function init() {
         scaleX = Math.min(Math.max(nextScaleX, 0.5), 5)
 
         if (0.5 < scaleX && scaleX < 5) {
-            currentX += (e.offsetX)*(prevScaleX - scaleX)
+            currentX += (1/prevScaleX - 1/scaleX)*mousePosX
             drawGraph()
         }
         prevScaleX = scaleX
